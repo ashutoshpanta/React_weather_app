@@ -1,33 +1,27 @@
 import { useState } from 'react';
 import SearchBar from './components/SearchBar';
 import WeatherCard from './components/WeatherCard';
+import useWeather from './hooks/useWeather';
 import './App.css';
 
-// Temporary mock data — we'll replace this with a real API call in Step 4
-const mockWeather = {
-  city: 'Kathmandu',
-  temp: 21,
-  condition: 'Solrigt men skyet',
-  feelsLike: 19,
-  high: 22,
-  low: 19,
-  icon: 'https://openweathermap.org/img/wn/03d@2x.png',
-};
+
 
 function App() {
   const [currentCity, setCurrentCity] = useState(null);
-  const [weather, setWeather] = useState(null);
+  const { weather, loading, error } = useWeather(currentCity);
 
   const handleSearch = (city) => {
     setCurrentCity(city);
-    setWeather(mockWeather); // temporary — pretend the API returned this
   };
 
   return (
     <div className="app">
       <h1>Weather Dashboard</h1>
       <SearchBar onSearch={handleSearch} />
-      <WeatherCard weather={weather} />
+
+      {loading && <p className="status-text">Loading...</p>}
+      {error && <p className="status-text error">{error}</p>}
+      {weather && !loading && !error && <WeatherCard weather={weather} />}
     </div>
   );
 }
